@@ -15,25 +15,31 @@ const Detail = () => {
                         <BookShelf>
                             <BookCard>
                                 <BookImage src="/images/img.png" alt="" />
-                                <BookText>School Level Guidebook</BookText>
-                                <ButtonsDiv>
-                                    <ViewButton>View</ViewButton>
-                                </ButtonsDiv>
+                                <BookDetailAndButton>
+                                    <BookText>School Level Guidebook</BookText>
+                                    <ButtonsDiv>
+                                        <ViewButton>View</ViewButton>
+                                    </ButtonsDiv>
+                                </BookDetailAndButton>
                             </BookCard>
                             <BookCard>
                                 <BookImage src="/images/img.png" alt="" />
-                                <BookText>Revision Material</BookText>
-                                <ButtonsDiv>
-                                    <ViewButton>View</ViewButton>
-                                </ButtonsDiv>
+                                <BookDetailAndButton2>
+                                    <BookText>Revision Material</BookText>
+                                    <ButtonsDiv>
+                                        <ViewButton>View</ViewButton>
+                                    </ButtonsDiv>
+                                </BookDetailAndButton2>
                             </BookCard>
                             <BookCard>
-                            <BookImage src="/images/img.png" alt="" />
-                                <BookText>National's Advance Guidebook</BookText>
-                                <ButtonsDiv>
-                                    <ViewButton>View</ViewButton>
-                                    <BuyButton>Buy</BuyButton>
-                                </ButtonsDiv>
+                                <BookImage src="/images/img.png" alt="" />
+                                <BookDetailAndButton3>
+                                    <BookText>National's Advance Guidebook</BookText>
+                                    <ButtonsDiv>
+                                        <ViewButton>Preview</ViewButton>
+                                        <BuyButton>Buy</BuyButton>
+                                    </ButtonsDiv>
+                                </BookDetailAndButton3>
                             </BookCard>
                         </BookShelf>
                         <ExamCard>
@@ -191,7 +197,7 @@ const ContentsHead = styled.span`
         top: 25px; 
         width: 100%;
         height: 2px;
-        background-color: rgba(44, 106, 177, 1);
+        background-color: rgba(217, 217, 217, 0.4);
         
 
         //width: 504.5px;
@@ -208,6 +214,16 @@ const ContentsHead = styled.span`
 
 const StreakContent = styled.p`
     //gap: 50px;
+    color: rgba(44, 106, 177, 1);
+
+    font-family: Cardo;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 25px;
+    letter-spacing: 0em;
+    text-align: left;
+
+
 `;
 
 const BookShelf = styled.div`
@@ -241,23 +257,94 @@ const BookCard = styled.div`
 
 `;
 
+const BookDetailAndButton = styled.div`
+    justify-content: center;
+    margin-left: 25%;
+    margin-right: 25%;
+    margin-bottom: 5px;
+    text-align: center;
+
+    font-family: Cardo;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 22px;
+    letter-spacing: 0em;
+/*
+    width: 88px;
+    height: 44px;
+    opacity: 0.9px;
+*/
+
+`;
+
+const BookDetailAndButton2 = styled(BookDetailAndButton)`   
+    margin-left:40%;
+    margin-right:40%;
+`;
+
+const BookDetailAndButton3 = styled(BookDetailAndButton)`
+    margin-left:20%;
+    margin-right:20%;
+`;
 const BookImage = styled.img`
 `;
 
 const BookText = styled.p`
-    
+    font-family: Cardo;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 22px;
+    letter-spacing: 0em;
+    text-align: center;
+    color: rgba(44, 106, 177, 1);
 `;
 
 const ButtonsDiv = styled.div`
-    
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: space-between;
 `;
 
 const ViewButton = styled.button`
-    
+    //margin-right: 5vw;
+    width: Fixed (54px);
+    height: Fixed (26px);
+    //padding: 8px, 14px, 8px, 14px ;
+    border-radius: 31.43px ;
+    //gap: 10px ;
+    //background: rgba(99, 101, 103, 0.15);
+    background-color: #AEA6A6;
+    //border: transparent;
+/*
+    & :hover {
+        background-color: #41C7DC;
+        letter-spacing: 5px;
+    }
+*/
 `;
 
 const BuyButton = styled.button`
-    margin-left: 5vw ;
+    //padding-left: 5vw ;
+    //margin-left: 5vw;
+    background: rgba(44, 106, 177, 1);
+
+    //width: Fixed (122px);
+    //height: Fixed (30px);
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 31.43px ;
+    gap: 10px ;
+
+    color: #FFFFFF;
+
+    font-family: Cardo;
+    //font-weight: 700;
+    line-height: 16px;
+    letter-spacing: 0em;
+    text-align: center;
+    
+
 `;
 
 const ExamCard = styled.div`
@@ -293,6 +380,7 @@ const ExamCard = styled.div`
 const ExamDetails = styled.div`
     display: flex;
     flex-direction: column;
+    margin-left:10px;
 `;
 
 const ExamDateTime = styled.p`
