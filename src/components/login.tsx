@@ -1,14 +1,166 @@
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { auth, signInWithPhoneNumber, firebaseApp, RecaptchaVerifier } from "../firebase";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import axios, { AxiosResponse } from 'axios';
+import {    
+        selectStudentId,
+        selectMobileNum,
+        selectStudentName,
+        selectGrade,
+        selectSchoolName,
+        selectExamDate,
+        selectExamCommenceTime,
+        selectExamEndTime,
+} from "../features/students/studentSlice";
+
+interface SendOtpResponse {
+    // Define the structure of the response data if needed
+    // For example, if the server returns an object with properties, define them here
+    status: string;
+    message: string;
+    // ... other properties
+};
+
+interface StudentState {
+    studentId: string| null;
+    mobileNum: string| null;
+    studentName: string | null;
+    grade: string | null;
+    schoolName: string | null;
+    examDate: string | null;
+    examCommenceTime: string | null;
+    examEndTime: string | null;
+};
+
+declare global {
+    interface Window {
+        recaptchaVerifier: RecaptchaVerifier;
+    }
+}
 
 const Login = () => {
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const studentName = useSelector(selectStudentName);
+    const studentMobNum = useSelector(selectMobileNum);
+    const studentId = useSelector(selectStudentId);
 
     const [mobileNumber, setMobileNumber] = useState<string>('');
     const [otp, setOtp] = useState<string>('');
 
+
+    console.log("Student Name = ", studentName);
+    console.log("Student Id = ", studentId);
+    console.log("Student Mobile Number = ", studentMobNum);
+    
+    const [buttonText, setButtonText] = useState('Send OTP');
+    const [otpSent, setOtpSent] = useState<'notSent' | 'sent' | 'submitted'>('notSent');
+
+    const [validMobNum, validateMobNum] = useState<'empty' | 'notEmpty' | 'invalid' | 'valid'>('empty');
+
+    const sendOtp = async (): Promise<void> => {
+        try {
+            // Validate mobile number
+            if (!/^\d{10}$/.test(mobileNumber)) {
+                alert('Mobile number must contain exactly 10 digits and only digits.');
+                return;
+            }
+
+            const response: AxiosResponse<SendOtpResponse> = await axios.post(
+            'https://release.streakcard.click/nfo/send-otp',
+            {
+              mobileNumber: mobileNumber
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+      
+          console.log('Status Code:', response.status); // Read the status code
+          console.log('Response Data:', response.data); // Handle the response data as needed
+          if(response.status == 200)
+          {
+            setButtonText("Login");
+            setOtpSent('sent');
+          }
+        } catch (error) {
+          console.error('Error sending OTP:', error);
+          // Handle the error
+        }
+    };
+
+    const submitOtp = async (): Promise<void> => {
+        try {
+            // Validate otp
+            if (!/^\d{4}$/.test(otp)) {
+                alert('OTP must contain exactly 4 digits and only digits.');
+                return;
+            }
+
+            const response: AxiosResponse<SendOtpResponse> = await axios.post(
+            'https://release.streakcard.click/nfo/verify-otp',
+            {
+              mobileNumber: mobileNumber,
+              otp: otp,
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+      
+          console.log('Status Code:', response.status); // Read the status code
+          console.log('Response Data:', response.data); // Handle the response data as needed
+          if(response.status == 200)
+          {
+            setButtonText("OTP Submitted");
+            setOtpSent('submitted');
+          }
+        } catch (error) {
+          console.error('Error sending OTP:', error);
+          // Handle the error
+        }
+    };
+    
+/*
     const handleLogin = (): void => {
         console.log('Logging in with', mobileNumber, otp);
-      };
+
+        try{
+            const recaptcha = new RecaptchaVerifier(auth, "recaptcha", {})
+            const confirmation = signInWithPhoneNumber(auth,mobileNumber, recaptcha);
+            console.log(confirmation);
+        }catch(err){
+            console.error(err);
+        }
+*/
+/*
+        // FOR TESTING DISABLING RE-CAPTCHA VERIFIER
+        auth.settings.appVerificationDisabledForTesting = true;
+
+        var appVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                'size': 'invisible',
+        });
+
+        signInWithPhoneNumber(auth,mobileNumber, appVerifier)
+        .then(function (confirmationResult) {
+            // confirmationResult can resolve with the fictional testVerificationCode above.
+            console.log("Sign in successful. Authentication Sending!!");
+            return confirmationResult.confirm(otp);
+        }).catch(function (error) {
+            console.log("Authentication Error !! Error with message = ",error.message);
+        });
+*/
+        
+/*
+    };
+*/
 
     return (
         <Container>
@@ -21,15 +173,29 @@ const Login = () => {
                             type="text"
                             placeholder="Mobile Number"
                             value={mobileNumber}
-                            onChange={(e) => setMobileNumber(e.target.value)}
+                            onChange={(e) => setMobileNumber(e.target.value.replace(/\D/, ''))}
                         />
                         <UserInput
                             type="text"
                             placeholder="OTP"
                             value={otp}
-                            onChange={(e) => setOtp(e.target.value)}
+                            onChange={(e) => setOtp(e.target.value.replace(/\D/, ''))}
                         />
-                        <LoginButton onClick={handleLogin}>Login</LoginButton>
+                        <div id="recaptcha"></div>
+                        {otpSent === 'notSent' && (
+                            <LoginButton onClick={sendOtp}>Send OTP</LoginButton>
+                        )}
+                        {otpSent === 'sent' && (
+                            <div>
+                                <p>OTP has been sent. Please check your mobile.</p>
+                                <LoginButton onClick={submitOtp}>Submit OTP</LoginButton>
+                            </div>
+                            )
+                        }
+                        {otpSent === 'submitted' && (
+                                <p>OTP has been submitted. You are now logged in.</p>
+                            )
+                        }
                     </LoginComps>
                 </FrontComps>
             </Content>
@@ -146,7 +312,7 @@ const UserInput = styled.input`
 `;
 
 const LoginButton = styled.button`
-    width: 25%;
+    width: 50%;
     height: 25px;
     top: 11.5px;
     left: 60px;
