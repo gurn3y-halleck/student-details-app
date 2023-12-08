@@ -1,0 +1,6 @@
+{
+    "authenticate": [
+      { "id":"67890123451234", "mobile": "6789012345", "otp":"1234" , "studentId": "zabcd"},
+      { "id":"34567890126789", "mobile": "3456789012", "otp":"6789" , "studentId": "efghi"}
+    ]
+}

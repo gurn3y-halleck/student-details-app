@@ -4,7 +4,23 @@ import { auth, signInWithPhoneNumber, firebaseApp, RecaptchaVerifier } from "../
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios, { AxiosResponse } from 'axios';
-import {    
+
+import {
+    selectKeyId,
+    selectMobileNum,
+    selectOtp,
+    selectStudentId,
+    setAuthenDetails,
+} from "../features/students/authenticationSlice";
+
+interface AuthenState {
+    keyId: string;
+    mobileNum: string;
+    otp: string;
+    studentId: string;
+};
+
+/*import {    
         selectStudentId,
         selectMobileNum,
         selectStudentName,
@@ -13,12 +29,14 @@ import {
         selectExamDate,
         selectExamTime,
 } from "../features/students/studentSlice";
+*/
 
 interface SendOtpResponse {
     status: string;
     message: string;
 };
 
+/*
 interface StudentState {
     studentId: string| null;
     mobileNum: string| null;
@@ -29,6 +47,7 @@ interface StudentState {
     examCommenceTime: string | null;
     examEndTime: string | null;
 };
+*/
 
 declare global {
     interface Window {
@@ -40,17 +59,23 @@ const Login = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const studentName = useSelector(selectStudentName);
-    const studentMobNum = useSelector(selectMobileNum);
-    const studentId = useSelector(selectStudentId);
+
+    let keyId = useSelector(selectKeyId);
+    //let mobNum = useSelector(selectMobileNum);
+    //let otpStored = useSelector(selectOtp);
+    let studentId = useSelector(selectStudentId);
+
+    //const studentName = useSelector(selectStudentName);
+    //const studentMobNum = useSelector(selectMobileNum);
+    //const studentId = useSelector(selectStudentId);
 
     const [mobileNumber, setMobileNumber] = useState<string>('');
     const [otp, setOtp] = useState<string>('');
 
 
-    console.log("Student Name = ", studentName);
-    console.log("Student Id = ", studentId);
-    console.log("Student Mobile Number = ", studentMobNum);
+    //console.log("Student Name = ", studentName);
+    //console.log("Student Id = ", studentId);
+    //console.log("Student Mobile Number = ", studentMobNum);
     
     const [buttonText, setButtonText] = useState('Send OTP');
     const [otpSent, setOtpSent] = useState<'notSent' | 'sent' | 'submitted'>('notSent');
@@ -58,13 +83,14 @@ const Login = () => {
     const [validMobNum, validateMobNum] = useState<'empty' | 'notEmpty' | 'invalid' | 'valid'>('empty');
 
     const sendOtp = async (): Promise<void> => {
-        try {
+        
             // Validating mobile number format
             if (!/^\d{10}$/.test(mobileNumber)) {
                 alert('Mobile number must contain exactly 10 digits and only digits.');
                 return;
             }
-
+        /*            
+        try {
             const response: AxiosResponse<SendOtpResponse> = await axios.post(
                 'https://release.streakcard.click/nfo/send-otp',
                 {
@@ -87,16 +113,26 @@ const Login = () => {
         } catch (error) {
             console.error('Error sending OTP:', error);
         }
+        */
+        setButtonText("Login");
+        setOtpSent('sent');
     };
 
     const submitOtp = async (): Promise<void> => {
+        let authenData : AuthenState = {
+            keyId: "",
+            mobileNum: "",
+            otp: "",
+            studentId: "",
+        };
         try {
             // Validating otp format
-            if (!/^\d{4}$/.test(otp)) {
+            /*if (!/^\d{4}$/.test(otp)) {
                 alert('OTP must contain exactly 4 digits and only digits.');
-                return;
-            }
-
+                throw 0;
+            }*/ 
+        /*
+        
             const response: AxiosResponse<SendOtpResponse> = await axios.post(
                 'https://release.streakcard.click/nfo/verify-otp',
                 {
@@ -120,6 +156,28 @@ const Login = () => {
         } catch (error) {
             console.error('Error sending OTP:', error);
         }
+        */
+            var stKeyId = mobileNumber+otp;
+            const response: AxiosResponse<AuthenState> = await axios.get('http://localhost:4500/authenticate/'+stKeyId);
+            console.log('Status Code:', response.status);
+            console.log('Response Data:', response.data);
+
+            navigate('/detail/'+response.data.studentId);
+            /*
+            authenData.keyId = response.data.keyId;
+            authenData.mobileNum = response.data.mobileNum;
+            authenData.otp = response.data.otp;
+            authenData.studentId = response.data.studentId;
+
+            setButtonText("OTP Submitted");
+            setOtpSent('submitted');
+            return authenData;
+            */
+        } catch (error) {
+            console.error('Error sending Request:', error);
+            //throw error;
+        }
+
     };
     
 /*  //USING FIREBASE PHONE AUTHENTICATION
@@ -163,13 +221,13 @@ const Login = () => {
                     <Logo src="/images/str Logo.svg" alt="" />
                     <LoginComps>
                         <Description>Enter your registered mobile number</Description>
-                        <UserInput
+                        <UserInput disabled={otpSent != 'notSent'}
                             type="text"
                             placeholder="Mobile Number"
                             value={mobileNumber}
                             onChange={(e) => setMobileNumber(e.target.value.replace(/\D/, ''))}
                         />
-                        <UserInput
+                        <UserInput disabled={otpSent != 'sent'}
                             type="text"
                             placeholder="OTP"
                             value={otp}

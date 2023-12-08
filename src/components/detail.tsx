@@ -54,10 +54,10 @@ const Detail = () => {
             examTime: ""
         };
         try {
-            const response: AxiosResponse<studentIdResponse> = await axios.get('http://localhost:3000/students/'+stId);
+            const response: AxiosResponse<studentIdResponse> = await axios.get('http://localhost:4600/students/'+stId);
             console.log('Status Code:', response.status);
             console.log('Response Data:', response.data); 
-            
+
             studentData.id = response.data.id;
             studentData.mobile = response.data.mobile;
             studentData.name = response.data.name;
