@@ -59,8 +59,8 @@ const Detail = () => {
                             <StudentGrade>nth Grade</StudentGrade>
                             <LineElement />
                             <SchoolName>Full Name of the School</SchoolName>
-                            <LineElement />
-                            <SignOutButton>Sign Out</SignOutButton>
+                            <LineElement3 />
+                            <SignOutLink href="">Sign Out</SignOutLink>
                         </StudentIdWrap>
                         <Support>
                             <img src="/images/contactsupport.svg" alt="" />
@@ -68,8 +68,8 @@ const Detail = () => {
                         </Support>
                     </StudentAndSupport>
                 </ContentBody>
+                <PageBottom>Streak Tech|All Right Reserved|2023</PageBottom>
             </ContentWrap>
-            <PageBottom>Streak Tech|All Right Reserved|2023</PageBottom>
         </Container>
     );
 }
@@ -90,7 +90,7 @@ const Container = styled.div`
 const ContentWrap = styled.div`
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: flex-start; //center;    //flex-start;
     width: 100%;
     height: 100%;
     min-height: 100%;
@@ -114,8 +114,11 @@ const ContentBody = styled.div`
     flex-direction: row-reverse;
 
     margin-top: 90px;
-
-    @media (max-width: 768px) {
+    @media only screen and (min-width: 480px)
+    {
+        margin-left: 60px;
+    }
+    @media only screen and (max-width: 768px) {
         flex-direction: column;
     }
 
@@ -127,12 +130,14 @@ const StudentAndSupport = styled.div`
     display: flex;
     flex-direction: column;
     margin-left: 20px;
+    margin-top: 20px;
     padding: 0px;
     margin-top: 0px;
     align-items: center;
-    justify-content: center;
+    //justify-content: center;
     text-align: center;
-    
+
+    margin-top: 20px;
 `;
 
 const StudentIdWrap = styled.div`
@@ -143,25 +148,35 @@ const StudentIdWrap = styled.div`
     flex-direction: column;
     //position: relative;
     background-color: #FFFFFF;
-    border-radius: 10%;
+    border-radius: 5%;
     text-align: left;
     
 `;
 
 const LineElement = styled.hr`
-    background: rgba(217, 217, 217, 0.4);
+    //background: rgba(217, 217, 217, 0.4);
+    border-color: rgba(217, 217, 217, 0.4);
     width: 208px;
     height: 1px;
     border-radius: 10px;
 `;
 
+const LineElement3 = styled(LineElement)`
+    width: 60px;
+    justify-content: left;
+    //left: 0px;
+    margin-left: 20px;
+`;
+
 const Support = styled.div`
     display: flex;
     flex-direction: row;
+    font-weight: 700;
 `;
 
 const StudentName = styled.p`
     padding-left: 20px;
+    font-weight: 700;
 `;
 
 const StudentGrade = styled.p`
@@ -172,8 +187,11 @@ const SchoolName = styled.p`
     padding-left: 20px;
 `;
 
-const SignOutButton = styled.button`
-
+const SignOutLink = styled.a`
+    padding-left: 20px;
+    padding-top: 15px;
+    text-decoration: none;
+    color: rgba(228, 110, 24, 1);
 `;
 
 const StreakContents = styled.div`
@@ -230,7 +248,7 @@ const BookShelf = styled.div`
     display: flex;
     flex-direction: row;
     gap: 10px;
-    @media (max-width: 768px) {
+    @media only screen and (max-width: 768px) {
         flex-direction: column;
     }
     //width: 75%;
@@ -351,7 +369,7 @@ const ExamCard = styled.div`
     display: flex;
     flex-direction: row;
 
-    @media (max-width: 768px) {
+    @media only screen and (max-width: 768px) {
         flex-direction: column;
     }
 
@@ -384,7 +402,15 @@ const ExamDetails = styled.div`
 `;
 
 const ExamDateTime = styled.p`
-    
+    top: 0;
+    margin-top:0;
+    font-family: Cardo;
+    font-size: 22px;
+    font-weight: 700;
+    //line-height: 30px;
+    letter-spacing: 0em;
+    text-align: left;
+
 `;
 
 
@@ -410,6 +436,20 @@ const PageBottom = styled.div`
     //margin-left: 40%;
     //margin-right: 40%;
     */
+    margin-top: 20px;
+    color:rgba(143, 143, 143, 1);
+
+    @media only screen and (min-width: 768px ){
+        margin-left: 500px;
+    }
+
+    @media only screen and (min-width: 480px) and (max-width: 767px) {
+        margin-left: 200px;
+    }
+
+    @media only screen and (max-width: 479px) {
+        margin-left: 50px;
+    }
 `;
 
 export default Detail;

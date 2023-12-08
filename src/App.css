@@ -9,7 +9,9 @@ html{
 body {
   background-color: #f9f9f9 ;
  
-  font-family: Avenir-Roman, sans-serif;
+  font-family: Cardo;
+  color: rgba(44, 106, 177, 1);
+  font-weight: 400;
   margin: 0;
   padding: 0;
 }
