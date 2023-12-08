@@ -11,16 +11,12 @@ import {
         selectGrade,
         selectSchoolName,
         selectExamDate,
-        selectExamCommenceTime,
-        selectExamEndTime,
+        selectExamTime,
 } from "../features/students/studentSlice";
 
 interface SendOtpResponse {
-    // Define the structure of the response data if needed
-    // For example, if the server returns an object with properties, define them here
     status: string;
     message: string;
-    // ... other properties
 };
 
 interface StudentState {
@@ -63,72 +59,70 @@ const Login = () => {
 
     const sendOtp = async (): Promise<void> => {
         try {
-            // Validate mobile number
+            // Validating mobile number format
             if (!/^\d{10}$/.test(mobileNumber)) {
                 alert('Mobile number must contain exactly 10 digits and only digits.');
                 return;
             }
 
             const response: AxiosResponse<SendOtpResponse> = await axios.post(
-            'https://release.streakcard.click/nfo/send-otp',
-            {
-              mobileNumber: mobileNumber
-            },
-            {
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            }
-          );
+                'https://release.streakcard.click/nfo/send-otp',
+                {
+                    mobileNumber: mobileNumber
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
       
-          console.log('Status Code:', response.status); // Read the status code
-          console.log('Response Data:', response.data); // Handle the response data as needed
-          if(response.status == 200)
-          {
-            setButtonText("Login");
-            setOtpSent('sent');
-          }
+            console.log('Status Code:', response.status);
+            console.log('Response Data:', response.data);
+            if(response.status == 200)
+            {
+                setButtonText("Login");
+                setOtpSent('sent');
+            }
         } catch (error) {
-          console.error('Error sending OTP:', error);
-          // Handle the error
+            console.error('Error sending OTP:', error);
         }
     };
 
     const submitOtp = async (): Promise<void> => {
         try {
-            // Validate otp
+            // Validating otp format
             if (!/^\d{4}$/.test(otp)) {
                 alert('OTP must contain exactly 4 digits and only digits.');
                 return;
             }
 
             const response: AxiosResponse<SendOtpResponse> = await axios.post(
-            'https://release.streakcard.click/nfo/verify-otp',
-            {
-              mobileNumber: mobileNumber,
-              otp: otp,
-            },
-            {
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            }
-          );
+                'https://release.streakcard.click/nfo/verify-otp',
+                {
+                    mobileNumber: mobileNumber,
+                    otp: otp,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
       
-          console.log('Status Code:', response.status); // Read the status code
-          console.log('Response Data:', response.data); // Handle the response data as needed
-          if(response.status == 200)
-          {
-            setButtonText("OTP Submitted");
-            setOtpSent('submitted');
-          }
+            console.log('Status Code:', response.status);
+            console.log('Response Data:', response.data);
+            if(response.status == 200)
+            {
+                setButtonText("OTP Submitted");
+                setOtpSent('submitted');
+            }
         } catch (error) {
-          console.error('Error sending OTP:', error);
-          // Handle the error
+            console.error('Error sending OTP:', error);
         }
     };
     
-/*
+/*  //USING FIREBASE PHONE AUTHENTICATION
     const handleLogin = (): void => {
         console.log('Logging in with', mobileNumber, otp);
 
@@ -193,7 +187,7 @@ const Login = () => {
                             )
                         }
                         {otpSent === 'submitted' && (
-                                <p>OTP has been submitted. You are now logged in.</p>
+                            <p>OTP has been submitted. You are now logged in.</p>
                             )
                         }
                     </LoginComps>

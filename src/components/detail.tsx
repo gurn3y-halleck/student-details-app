@@ -1,6 +1,107 @@
+import React from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
+import axios, { AxiosResponse } from 'axios';
+import { useDispatch, useSelector } from "react-redux";
+import {
+    setStudentDetails,
+    selectStudentId,
+    selectMobileNum,
+    selectStudentName,
+    selectGrade,
+    selectSchoolName,
+    selectExamDate,
+    selectExamTime,
+} from "../features/students/studentSlice";
+
+interface studentIdResponse {
+    id: string,
+    mobile: string,
+    name: string,
+    grade: string,
+    school: string,
+    examDate: string,
+    examTime: string,
+};
 
 const Detail = () => {
+
+    const stId = useParams().id;
+    console.log("Student Id =", stId);
+
+    let studentName = "";
+    let grade = "" ;
+    let schoolName = "" ; 
+    let examDate = ""; 
+    let examTime = "" ; 
+
+    const dispatch = useDispatch();
+    studentName = useSelector(selectStudentName);
+    grade = useSelector(selectGrade);
+    schoolName = useSelector(selectSchoolName);
+    examDate = useSelector(selectExamDate);
+    examTime = useSelector(selectExamTime);
+
+    const requestDetails = async (): Promise<studentIdResponse> => {
+        let studentData: studentIdResponse ={
+            id: "",
+            mobile: "",
+            name: "",
+            grade: "",
+            school: "",
+            examDate: "",
+            examTime: ""
+        };
+        try {
+            const response: AxiosResponse<studentIdResponse> = await axios.get('http://localhost:3000/students/'+stId);
+            console.log('Status Code:', response.status);
+            console.log('Response Data:', response.data); 
+            
+            studentData.id = response.data.id;
+            studentData.mobile = response.data.mobile;
+            studentData.name = response.data.name;
+            studentData.grade = response.data.grade ;
+            studentData.school = response.data.school;
+            studentData.examDate = response.data.examDate ;
+            studentData.examTime = response.data.examTime ;
+
+            return studentData;
+
+        } catch (error) {
+            console.error('Error sending Request:', error);
+            throw error;
+        }
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const result: studentIdResponse = await requestDetails();
+                setStudent(result);
+                console.log("new student name = ", result.name);
+                console.log("Student Name = ", studentName);
+            } catch (error) {
+                console.error('Getting Error in Effect - Error:', error);
+            }
+        };
+        fetchData();
+    }, []);
+
+    const setStudent = (student: { id: string; mobile: string; name: string; grade: string; school: string ; examDate: string; examTime: string}) => {
+        return dispatch(
+            setStudentDetails({
+                studentId: student.id,
+                mobileNum: student.mobile,
+                studentName: student.name,
+                grade: student.grade,
+                schoolName: student.school,
+                examDate: student.examDate,
+                examTime: student.examTime
+            })
+        );
+    };
+
     return (
         <Container>
             <ContentWrap>
@@ -53,7 +154,8 @@ const Detail = () => {
                         <ExamCard>
                             <ExamDetails>
                                 <p>Your Exam is scheduled on </p>
-                                <ExamDateTime>19th November, 2023 <br/> 10am to 11.30am </ExamDateTime>
+                                <ExamDate>{examDate},</ExamDate>
+                                <ExamTime>{examTime}</ExamTime>
                             </ExamDetails>
                             <ButtonHolder>
                                 <BuyButton2>
@@ -64,11 +166,11 @@ const Detail = () => {
                     </StreakContents>
                     <StudentAndSupport>
                         <StudentIdWrap>
-                            <StudentName>Student Name</StudentName>
+                            <StudentName>{studentName}</StudentName>
                             <LineElement />
-                            <StudentGrade>nth Grade</StudentGrade>
+                            <StudentGrade>{grade} Grade</StudentGrade>
                             <LineElement />
-                            <SchoolName>Full Name of the School</SchoolName>
+                            <SchoolName>{schoolName}</SchoolName>
                             <LineElement3 />
                             <SignOutLink href="">Sign Out</SignOutLink>
                         </StudentIdWrap>
@@ -164,7 +266,6 @@ const StudentIdWrap = styled.div`
 `;
 
 const LineElement = styled.hr`
-    //background: rgba(217, 217, 217, 0.4);
     border-color: rgba(217, 217, 217, 0.4);
     width: 208px;
     height: 1px;
@@ -238,11 +339,6 @@ const ContentsHead = styled.span`
         //width: 504.5px;
         border: 1px;
         opacity: 0.13px;
-        //angle: -0.06 deg;
-
-        //background: rgba(44, 106, 177, 1);
-
-        //border: 1px solid rgba(44, 106, 177, 1);
 
     }
 `;
@@ -277,7 +373,6 @@ const BookCard = styled.div`
     background: rgba(217, 217, 217, 0.5);
     //width: 30%;
 
-    //-----------------------------------
     border: 1px solid rgba(0, 0, 0, 0.06);
 
     width: Fixed (191px);
@@ -287,8 +382,6 @@ const BookCard = styled.div`
     border-radius: 13px;
     border: 1px;
     justify-content: space-between;
-
-
 
 `;
 
@@ -352,16 +445,10 @@ const ViewButton = styled.button`
     //padding: 8px, 14px, 8px, 14px ;
     border-radius: 31.43px ;
     //gap: 10px ;
-    //background: rgba(99, 101, 103, 0.15);
+
     background-color: #AEA6A6;
     border: transparent;
  
-/*
-    & :hover {
-        background-color: #41C7DC;
-        letter-spacing: 5px;
-    }
-*/
 `;
 
 const ButtonText = styled.a`
@@ -420,8 +507,6 @@ const ExamCard = styled.div`
 
     border: 1px solid rgba(4, 27, 63, 0.05);
 
-    ///-------------
-
     width: Fixed (647px);
     height: Fixed (130px);
     top: 318px;
@@ -453,29 +538,23 @@ const ExamDateTime = styled.p`
 
 `;
 
+const ExamDate = styled(ExamDateTime)`
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+`;
+
+const ExamTime = styled(ExamDateTime)`
+    margin-top: 0px;
+    padding-top: 0px;
+`;
+
 
 const ButtonHolder = styled.div`
     margin-left: 50%;
 `;
 
-const PageFooter = styled.div`
-
-    //align-items: center;
-    //justify-content: center;
-    //text-align: center;
-
-`;
 
 const PageBottom = styled.div`
-   /*
-    padding: 5px 5px 5px 5px;
-    margin: 5px 5px 5px 5px;
-    position: static;
-    text-align: center;
-    //justify-content: space-between;
-    //margin-left: 40%;
-    //margin-right: 40%;
-    */
     margin-top: 20px;
     color:rgba(143, 143, 143, 1);
 

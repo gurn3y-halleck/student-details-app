@@ -1,25 +1,23 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface StudentState {
-    studentId: string| null;
-    mobileNum: string| null;
-    studentName: string | null;
-    grade: string | null;
-    schoolName: string | null;
-    examDate: string | null;
-    examCommenceTime: string | null;
-    examEndTime: string | null;
+    studentId: string;
+    mobileNum: string;
+    studentName: string;
+    grade: string;
+    schoolName: string;
+    examDate: string;
+    examTime: string;
 };
 
 const initialState: StudentState = {
-    studentId: null,
-    mobileNum: null,
-    studentName: null,
-    grade: null,
-    schoolName: null,
-    examDate: null,
-    examCommenceTime: null,
-    examEndTime: null,
+    studentId: "",
+    mobileNum: "",
+    studentName: "",
+    grade: "",
+    schoolName: "",
+    examDate: "",
+    examTime: "",
 };
 
 
@@ -36,8 +34,7 @@ const studentSlice = createSlice({
             grade,
             schoolName,
             examDate,
-            examCommenceTime,
-            examEndTime,
+            examTime,
         } = action.payload;
 
         state.studentId = studentId;
@@ -46,8 +43,7 @@ const studentSlice = createSlice({
         state.grade = grade;
         state.schoolName = schoolName;
         state.examDate = examDate;
-        state.examCommenceTime = examCommenceTime;
-        state.examEndTime = examEndTime;
+        state.examTime = examTime;
     },
   },
 });
@@ -60,7 +56,6 @@ export const selectStudentName = (state: { student: StudentState }) => state.stu
 export const selectGrade = (state: { student: StudentState }) => state.student.grade;
 export const selectSchoolName = (state: { student: StudentState }) => state.student.schoolName;
 export const selectExamDate = (state: { student: StudentState }) => state.student.examDate;
-export const selectExamCommenceTime = (state: { student: StudentState }) => state.student.examCommenceTime;
-export const selectExamEndTime = (state: { student: StudentState }) => state.student.examEndTime;
+export const selectExamTime = (state: { student: StudentState }) => state.student.examTime;
 
 export default studentSlice.reducer;
