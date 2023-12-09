@@ -60,7 +60,7 @@ const Login = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    let keyId = useSelector(selectKeyId);
+    //let keyId = useSelector(selectKeyId);
     //let mobNum = useSelector(selectMobileNum);
     //let otpStored = useSelector(selectOtp);
     let studentId = useSelector(selectStudentId);
@@ -129,7 +129,10 @@ const Login = () => {
             // Validating otp format
             if (!/^\d{4}$/.test(otp)) {
                 alert('OTP must contain exactly 4 digits and only digits.');
-                throw 0;
+                return;
+            } else {
+                const stKeyId = mobileNumber+otp;
+                navigate('/detail/StudentDetail', {state: stKeyId});
             }
         /*
         
@@ -157,12 +160,12 @@ const Login = () => {
             console.error('Error sending OTP:', error);
         }
         */
-            var stKeyId = mobileNumber+otp;
-            const response: AxiosResponse<AuthenState> = await axios.get('http://localhost:4500/authenticate/'+stKeyId);
-            console.log('Status Code:', response.status);
-            console.log('Response Data:', response.data);
+            
+            //const response: AxiosResponse<AuthenState> = await axios.get('http://localhost:4500/authenticate/'+stKeyId);
+            //console.log('Status Code:', response.status);
+            //console.log('Response Data:', response.data);
 
-            navigate('/detail/'+response.data.studentId);
+            //navigate('/detail/StudentDetail', {state: stKeyId});
             /*
             authenData.keyId = response.data.keyId;
             authenData.mobileNum = response.data.mobileNum;

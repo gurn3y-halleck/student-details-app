@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import axios, { AxiosResponse } from 'axios';
 import { useDispatch, useSelector } from "react-redux";
@@ -15,6 +15,10 @@ import {
     selectExamTime,
 } from "../features/students/studentSlice";
 
+import db, {doc, getDoc} from "../firebase";
+import { DocumentSnapshot } from 'firebase/firestore';
+
+
 interface studentIdResponse {
     id: string,
     mobile: string,
@@ -27,8 +31,11 @@ interface studentIdResponse {
 
 const Detail = () => {
 
-    const stId = useParams().id;
-    console.log("Student Id =", stId);
+    //const stId = useParams().id;
+    //console.log("Student Id =", stId);
+
+    const location = useLocation();
+    const stKeyId = location.state;
 
     let studentName = "";
     let grade = "" ;
@@ -56,17 +63,48 @@ const Detail = () => {
             examTime: ""
         };
         try {
-            const response: AxiosResponse<studentIdResponse> = await axios.get('http://localhost:4600/students/'+stId);
-            console.log('Status Code:', response.status);
-            console.log('Response Data:', response.data); 
+            //const response: AxiosResponse<studentIdResponse> = await axios.get('http://localhost:4600/students/'+stId);
+            //console.log('Status Code:', response.status);
+            //console.log('Response Data:', response.data); 
 
-            studentData.id = response.data.id;
-            studentData.mobile = response.data.mobile;
-            studentData.name = response.data.name;
-            studentData.grade = response.data.grade ;
-            studentData.school = response.data.school;
-            studentData.examDate = response.data.examDate ;
-            studentData.examTime = response.data.examTime ;
+            // FIRESTORE SET START
+
+            const docRef = doc(db, "StudentDetails", stKeyId);
+            const docSnap = await getDoc(docRef);
+            //const myDocSnap: DocumentSnapshot<DocumentData, DocumentData> = docSnap;
+
+            //var data = docSnap.data()!;
+            //console.log("Data from firestore : DocSnap.data = ",docSnap.data);
+
+            if (docSnap.exists()) {
+                console.log("Document data:", docSnap.data());
+            } else {
+                // docSnap.data() will be undefined in this case
+                console.log("No such document!");
+                alert("INVALID MOB NUMBER OR PASSWORD. TRY AGAIN !");
+                navigate('/');
+            }
+
+            // FIRESTORE SET END
+
+            const response = docSnap.data() as unknown as studentIdResponse;
+
+            console.log("response.id: ", response.id);
+            console.log("response.name: ", response.name);
+            console.log("response.mobile: ", response.mobile);
+            console.log("response.school: ", response.school);
+            console.log("response.grade: ", response.grade);
+            console.log("response.examDate: ", response.examDate);
+            console.log("response.examTime: ", response.examTime);
+
+
+            studentData.id = response.id;
+            studentData.mobile = response.mobile;
+            studentData.name = response.name;
+            studentData.grade = response.grade ;
+            studentData.school = response.school;
+            studentData.examDate = response.examDate ;
+            studentData.examTime = response.examTime ;
 
             return studentData;
 

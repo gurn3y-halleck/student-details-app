@@ -1,0 +1,9 @@
+These users are present in the firestore database. You can use these data for testing.
+
+MOBILE NO.    OTP
+
+1020304050    9999
+1234509876    0000
+1234567890    1234
+9876543210    9876
+
