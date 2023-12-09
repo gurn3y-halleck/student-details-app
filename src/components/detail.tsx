@@ -1,6 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import axios, { AxiosResponse } from 'axios';
 import { useDispatch, useSelector } from "react-redux";
@@ -42,6 +42,8 @@ const Detail = () => {
     schoolName = useSelector(selectSchoolName);
     examDate = useSelector(selectExamDate);
     examTime = useSelector(selectExamTime);
+
+    const navigate = useNavigate();
 
     const requestDetails = async (): Promise<studentIdResponse> => {
         let studentData: studentIdResponse ={
@@ -100,6 +102,10 @@ const Detail = () => {
                 examTime: student.examTime
             })
         );
+    };
+
+    const handleSignOut = () => {
+        navigate('/');
     };
 
     return (
@@ -172,7 +178,7 @@ const Detail = () => {
                             <LineElement />
                             <SchoolName>{schoolName}</SchoolName>
                             <LineElement3 />
-                            <SignOutLink href="">Sign Out</SignOutLink>
+                            <SignOutLink href="" onClick={handleSignOut}>Sign Out</SignOutLink>
                         </StudentIdWrap>
                         <Support>
                             <img src="/images/contactsupport.svg" alt="" />
