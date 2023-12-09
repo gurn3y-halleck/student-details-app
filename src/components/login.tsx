@@ -397,6 +397,8 @@ const FooterDesc = styled.p`
     letter-spacing: 0em;
     text-align: center;
     justify-content: center;
+    color: rgba(143, 143, 143, 1);
+
 
 `;
 export default Login;
