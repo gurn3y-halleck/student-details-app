@@ -127,10 +127,10 @@ const Login = () => {
         };
         try {
             // Validating otp format
-            /*if (!/^\d{4}$/.test(otp)) {
+            if (!/^\d{4}$/.test(otp)) {
                 alert('OTP must contain exactly 4 digits and only digits.');
                 throw 0;
-            }*/ 
+            }
         /*
         
             const response: AxiosResponse<SendOtpResponse> = await axios.post(
