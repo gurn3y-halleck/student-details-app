@@ -45,10 +45,19 @@ const studentSlice = createSlice({
         state.examDate = examDate;
         state.examTime = examTime;
     },
+    setSignOutState: (state) => {
+      state.studentId = "";
+      state.mobileNum = "";
+      state.studentName = "";
+      state.grade = "";
+      state.schoolName = "";
+      state.examDate = "";
+      state.examTime = "";
+    }
   },
 });
 
-export const { setStudentDetails } = studentSlice.actions;
+export const { setStudentDetails, setSignOutState } = studentSlice.actions;
 
 export const selectStudentId = (state: {student: StudentState }) => state.student.studentId;
 export const selectMobileNum = (state: { student: StudentState }) => state.student.mobileNum;

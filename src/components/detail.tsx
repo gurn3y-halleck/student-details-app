@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import {
     setStudentDetails,
+    setSignOutState,
     selectStudentId,
     selectMobileNum,
     selectStudentName,
@@ -16,8 +17,6 @@ import {
 } from "../features/students/studentSlice";
 
 import db, {doc, getDoc} from "../firebase";
-import { DocumentSnapshot } from 'firebase/firestore';
-
 
 interface studentIdResponse {
     id: string,
@@ -63,9 +62,8 @@ const Detail = () => {
             //const response: AxiosResponse<studentIdResponse> = await axios.get('http://localhost:4600/students/'+stId);
             //console.log('Status Code:', response.status);
             //console.log('Response Data:', response.data); 
-
-            // FIRESTORE SET START
-
+            
+            //Getting data from firestore
             const docRef = doc(db, "StudentDetails", stKeyId);
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
@@ -75,9 +73,6 @@ const Detail = () => {
                 alert("INVALID MOB NUMBER OR PASSWORD. TRY AGAIN !");
                 navigate('/');
             }
-
-            // FIRESTORE SET END
-
             const response = docSnap.data() as unknown as studentIdResponse;
 
             console.log("response.id: ", response.id);
@@ -87,7 +82,6 @@ const Detail = () => {
             console.log("response.grade: ", response.grade);
             console.log("response.examDate: ", response.examDate);
             console.log("response.examTime: ", response.examTime);
-
 
             studentData.id = response.id;
             studentData.mobile = response.mobile;
@@ -110,7 +104,7 @@ const Detail = () => {
             try {
                 const result: studentIdResponse = await requestDetails();
                 setStudent(result);
-                console.log("new student name = ", result.name);
+                console.log("Result name = ", result.name);
                 console.log("Student Name = ", studentName);
             } catch (error) {
                 console.error('Getting Error in Effect - Error:', error);
@@ -134,6 +128,7 @@ const Detail = () => {
     };
 
     const handleSignOut = () => {
+        dispatch(setSignOutState());
         navigate('/');
     };
 
