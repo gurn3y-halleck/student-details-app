@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import axios, { AxiosResponse } from 'axios';
+//import axios, { AxiosResponse } from 'axios';
 import { useDispatch, useSelector } from "react-redux";
 import {
     setStudentDetails,
@@ -30,9 +30,6 @@ interface studentIdResponse {
 };
 
 const Detail = () => {
-
-    //const stId = useParams().id;
-    //console.log("Student Id =", stId);
 
     const location = useLocation();
     const stKeyId = location.state;
@@ -71,15 +68,9 @@ const Detail = () => {
 
             const docRef = doc(db, "StudentDetails", stKeyId);
             const docSnap = await getDoc(docRef);
-            //const myDocSnap: DocumentSnapshot<DocumentData, DocumentData> = docSnap;
-
-            //var data = docSnap.data()!;
-            //console.log("Data from firestore : DocSnap.data = ",docSnap.data);
-
             if (docSnap.exists()) {
                 console.log("Document data:", docSnap.data());
             } else {
-                // docSnap.data() will be undefined in this case
                 console.log("No such document!");
                 alert("INVALID MOB NUMBER OR PASSWORD. TRY AGAIN !");
                 navigate('/');

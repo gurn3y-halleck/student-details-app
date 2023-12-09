@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
-import { auth, signInWithPhoneNumber, firebaseApp, RecaptchaVerifier } from "../firebase";
+import db, { RecaptchaVerifier, doc, getDoc } from "../firebase";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import axios, { AxiosResponse } from 'axios';
+//import axios, { AxiosResponse } from 'axios';
 
 import {
     selectKeyId,
@@ -20,34 +20,11 @@ interface AuthenState {
     studentId: string;
 };
 
-/*import {    
-        selectStudentId,
-        selectMobileNum,
-        selectStudentName,
-        selectGrade,
-        selectSchoolName,
-        selectExamDate,
-        selectExamTime,
-} from "../features/students/studentSlice";
-*/
-
 interface SendOtpResponse {
     status: string;
     message: string;
 };
 
-/*
-interface StudentState {
-    studentId: string| null;
-    mobileNum: string| null;
-    studentName: string | null;
-    grade: string | null;
-    schoolName: string | null;
-    examDate: string | null;
-    examCommenceTime: string | null;
-    examEndTime: string | null;
-};
-*/
 
 declare global {
     interface Window {
@@ -60,22 +37,10 @@ const Login = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    //let keyId = useSelector(selectKeyId);
-    //let mobNum = useSelector(selectMobileNum);
-    //let otpStored = useSelector(selectOtp);
     let studentId = useSelector(selectStudentId);
-
-    //const studentName = useSelector(selectStudentName);
-    //const studentMobNum = useSelector(selectMobileNum);
-    //const studentId = useSelector(selectStudentId);
 
     const [mobileNumber, setMobileNumber] = useState<string>('');
     const [otp, setOtp] = useState<string>('');
-
-
-    //console.log("Student Name = ", studentName);
-    //console.log("Student Id = ", studentId);
-    //console.log("Student Mobile Number = ", studentMobNum);
     
     const [buttonText, setButtonText] = useState('Send OTP');
     const [otpSent, setOtpSent] = useState<'notSent' | 'sent' | 'submitted'>('notSent');
@@ -84,11 +49,11 @@ const Login = () => {
 
     const sendOtp = async (): Promise<void> => {
         
-            // Validating mobile number format
-            if (!/^\d{10}$/.test(mobileNumber)) {
-                alert('Mobile number must contain exactly 10 digits and only digits.');
-                return;
-            }
+        // Validating mobile number format
+        if (!/^\d{10}$/.test(mobileNumber)) {
+            alert('Mobile number must contain exactly 10 digits and only digits.');
+            return;
+        }
         /*            
         try {
             const response: AxiosResponse<SendOtpResponse> = await axios.post(
@@ -132,10 +97,25 @@ const Login = () => {
                 return;
             } else {
                 const stKeyId = mobileNumber+otp;
-                navigate('/detail/StudentDetail', {state: stKeyId});
+
+
+                // FIRESTORE CHECK
+
+                const docRef = doc(db, "StudentDetails", stKeyId);
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    console.log("Document data:", docSnap.data());
+                    navigate('/detail/StudentDetail', {state: stKeyId});
+                } else {
+                    // docSnap.data() will be undefined in this case
+                    console.log("No such document!");
+                    alert("INVALID MOB NUMBER OR PASSWORD. TRY AGAIN !");
+                    window.location.reload();   
+                }
+                // FIRESTORE CHECK ENDS
             }
-        /*
-        
+            /*
             const response: AxiosResponse<SendOtpResponse> = await axios.post(
                 'https://release.streakcard.click/nfo/verify-otp',
                 {
@@ -156,11 +136,9 @@ const Login = () => {
                 setButtonText("OTP Submitted");
                 setOtpSent('submitted');
             }
-        } catch (error) {
-            console.error('Error sending OTP:', error);
-        }
-        */
+            */
             
+            // LOCAL TESTING
             //const response: AxiosResponse<AuthenState> = await axios.get('http://localhost:4500/authenticate/'+stKeyId);
             //console.log('Status Code:', response.status);
             //console.log('Response Data:', response.data);
@@ -184,40 +162,6 @@ const Login = () => {
 
     };
     
-/*  //USING FIREBASE PHONE AUTHENTICATION
-    const handleLogin = (): void => {
-        console.log('Logging in with', mobileNumber, otp);
-
-        try{
-            const recaptcha = new RecaptchaVerifier(auth, "recaptcha", {})
-            const confirmation = signInWithPhoneNumber(auth,mobileNumber, recaptcha);
-            console.log(confirmation);
-        }catch(err){
-            console.error(err);
-        }
-*/
-/*
-        // FOR TESTING DISABLING RE-CAPTCHA VERIFIER
-        auth.settings.appVerificationDisabledForTesting = true;
-
-        var appVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-                'size': 'invisible',
-        });
-
-        signInWithPhoneNumber(auth,mobileNumber, appVerifier)
-        .then(function (confirmationResult) {
-            // confirmationResult can resolve with the fictional testVerificationCode above.
-            console.log("Sign in successful. Authentication Sending!!");
-            return confirmationResult.confirm(otp);
-        }).catch(function (error) {
-            console.log("Authentication Error !! Error with message = ",error.message);
-        });
-*/
-        
-/*
-    };
-*/
-
     return (
         <Container>
             <Content>
@@ -243,7 +187,7 @@ const Login = () => {
                         )}
                         {otpSent === 'sent' && (
                             <div>
-                                <p>OTP has been sent. Please check your mobile.</p>
+                                <p>Please enter the OTP assigned to you</p>
                                 <LoginButton onClick={submitOtp}>Submit OTP</LoginButton>
                             </div>
                             )
