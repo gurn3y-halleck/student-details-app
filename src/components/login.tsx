@@ -175,7 +175,8 @@ const Login = () => {
             */
         } catch (error) {
             console.error('Error sending Request:', error);
-            //throw error;
+            alert("Unregisted Mobile Number or incorrect OTP. Please try again.");
+            window.location.reload();
         }
 
     };
