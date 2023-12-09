@@ -5,39 +5,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 //import axios, { AxiosResponse } from 'axios';
 
-import {
-    selectKeyId,
-    selectMobileNum,
-    selectOtp,
-    selectStudentId,
-    setAuthenDetails,
-} from "../features/students/authenticationSlice";
-
-interface AuthenState {
-    keyId: string;
-    mobileNum: string;
-    otp: string;
-    studentId: string;
-};
-
 interface SendOtpResponse {
     status: string;
     message: string;
 };
 
 
-declare global {
-    interface Window {
-        recaptchaVerifier: RecaptchaVerifier;
-    }
-}
-
 const Login = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    let studentId = useSelector(selectStudentId);
 
     const [mobileNumber, setMobileNumber] = useState<string>('');
     const [otp, setOtp] = useState<string>('');
@@ -57,7 +34,7 @@ const Login = () => {
         /*            
         try {
             const response: AxiosResponse<SendOtpResponse> = await axios.post(
-                'https://release.streakcard.click/nfo/send-otp',
+                'https://.streakcard.click/nfo/send-otp',
                 {
                     mobileNumber: mobileNumber
                 },
@@ -84,12 +61,6 @@ const Login = () => {
     };
 
     const submitOtp = async (): Promise<void> => {
-        let authenData : AuthenState = {
-            keyId: "",
-            mobileNum: "",
-            otp: "",
-            studentId: "",
-        };
         try {
             // Validating otp format
             if (!/^\d{4}$/.test(otp)) {
@@ -108,7 +79,6 @@ const Login = () => {
                     console.log("Document data:", docSnap.data());
                     navigate('/detail/StudentDetail', {state: stKeyId});
                 } else {
-                    // docSnap.data() will be undefined in this case
                     console.log("No such document!");
                     alert("INVALID MOB NUMBER OR PASSWORD. TRY AGAIN !");
                     window.location.reload();   
@@ -117,7 +87,7 @@ const Login = () => {
             }
             /*
             const response: AxiosResponse<SendOtpResponse> = await axios.post(
-                'https://release.streakcard.click/nfo/verify-otp',
+                'https://.streakcard.click/nfo/verify-otp',
                 {
                     mobileNumber: mobileNumber,
                     otp: otp,
