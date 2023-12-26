@@ -34,7 +34,7 @@ const Login = () => {
         /*            
         try {
             const response: AxiosResponse<SendOtpResponse> = await axios.post(
-                'https://.streakcard.click/nfo/send-otp',
+                'https://Otp_generating_server_url',
                 {
                     mobileNumber: mobileNumber
                 },
@@ -87,7 +87,7 @@ const Login = () => {
             }
             /*
             const response: AxiosResponse<SendOtpResponse> = await axios.post(
-                'https://.streakcard.click/nfo/verify-otp',
+                'https://Otp_validating_server_url',
                 {
                     mobileNumber: mobileNumber,
                     otp: otp,
